@@ -1,30 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Verify Email</title>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Get the URL fragment, e.g., #access_token=LONG_ACCESS_TOKEN&expires_in=3600
-      const hash = window.location.hash;
+<meta charset="UTF-8" />
+<title>Verify Email</title>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const hash = window.location.hash; // e.g., #access_token=...
+    const params = new URLSearchParams(hash.substring(1)); // remove '#'
 
-      // Parse the fragment parameters
-      const params = new URLSearchParams(hash.substring(1)); // remove '#'
+    const accessToken = params.get('access_token');
 
-      const accessToken = params.get('access_token');
+    if (accessToken) {
+      const encodedToken = encodeURIComponent(accessToken);
+      const deepLinkUrl = `myapp://verify?token=${encodedToken}`;
 
-      if (accessToken) {
-        // Redirect to your app with the token
-        // For example, deep linking into your app:
-        window.location.href = `myapp://verify?token=${encodeURIComponent(accessToken)}`;
-      } else {
-        // Show error if token not found
-        document.body.innerHTML = '<h2>Invalid verification link</h2>';
-      }
-    });
-  </script>
+      // Check if we're in an environment that supports deep links
+      // For example, in a browser, this won't work, so fallback:
+      
+      // Attempt to redirect to deep link
+      window.location.href = deepLinkUrl;
+
+      // Fallback: display token for manual copying
+      document.body.innerHTML = `
+        <h2>Verification Token</h2>
+        <p>Please copy this token and open your app manually:</p>
+        <pre>${accessToken}</pre>
+      `;
+    } else {
+      document.body.innerHTML = '<h2>Invalid verification link</h2>';
+    }
+  });
+</script>
 </head>
 <body>
-  <h2>Verifying...</h2>
+<h2>Verifying...</h2>
 </body>
 </html>
