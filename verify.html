@@ -1,22 +1,23 @@
-CopyRun
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Email Verification</title>
+  <title>Verify Email</title>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const token = urlParams.get('token');
+
+      if (token) {
+        // Redirect to  app with the token
+        window.location.href = `myapp://verify?token=${token}`;
+      } else {
+        document.body.innerHTML = '<h2>Invalid verification link</h2>';
+      }
+    });
+  </script>
 </head>
 <body>
-  <script>
-    // Parse URL for the token
-    const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get('token');
-
-    if (token) {
-      // Redirect to your app with the token as a parameter
-      window.location.href = `myapp://verify?token=${token}`;
-    } else {
-      document.body.innerText = 'Invalid verification link.';
-    }
-  </script>
+  <h2>Verifying...</h2>
 </body>
 </html>
