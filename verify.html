@@ -2,28 +2,15 @@
 <html>
 <head>
   <title>Email Verification</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/supabase.min.js"></script>
-</head>
-<body>
-  <h1>Verifying your email...</h1>
   <script>
-    const supabaseUrl = 'https://lxsqhmqmzuaryxgwuius.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx4c3FobXFtenVhcnl4Z3d1aXVzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1NTQwODgsImV4cCI6MjA2NTEzMDA4OH0.iuvTDWf7vlkPUddyix-qN9w8QnB-wkVjfBZ0ATTBdW8'; 
-    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
-
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get('token');
-
-    // Replace with your app URL
+    // Replace this with your app's URL
     const appUrl = 'https://ethiodigital.net';
 
-    // Parse the hash part of URL (after #)
-    const hash = window.location.hash; // e.g., #access_token=...
-
-    // Function to parse hash parameters
-    function parseHashParams(hashString) {
+    // Function to parse URL hash parameters
+    function parseHashParams() {
+      const hash = window.location.hash.substring(1); // Remove the #
       const params = {};
-      hashString.substring(1).split('&').forEach(pair => {
+      hash.split('&').forEach(pair => {
         const [key, value] = pair.split('=');
         if (key) {
           params[key] = decodeURIComponent(value);
@@ -32,17 +19,19 @@
       return params;
     }
 
-    const hashParams = parseHashParams(hash);
+    // Immediately execute
+    (function() {
+      const params = parseHashParams();
 
-    // Check if access_token exists
-    if (hashParams.access_token) {
-      // You can also verify the token if needed
-      // For now, just redirect immediately
-      window.location.href = appUrl;
-    } else {
-      // No token found, redirect anyway
-      window.location.href = appUrl;
-    }
+      // Optional: You can log the token for debugging
+      // console.log('Access token:', params.access_token);
+
+      // Redirect immediately
+      window.location.replace(appUrl);
+    })();
   </script>
+</head>
+<body>
+  <h1>Verifying your email...</h1>
 </body>
 </html>
