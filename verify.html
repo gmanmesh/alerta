@@ -3,8 +3,8 @@
 <head>
   <title>Email Verification</title>
   <script>
-    // Replace this with your app's URL
-    const appUrl = 'http://localhost:8081';
+    // app's URL
+    const appUrl = 'http://192.168.100.29:8081';
 
     // Function to parse URL hash parameters
     function parseHashParams() {
@@ -18,16 +18,18 @@
       });
       return params;
     }
-
     // Immediately execute
     (function() {
       const params = parseHashParams();
 
-      // Optional: You can log the token for debugging
-      // console.log('Access token:', params.access_token);
+      const token = params.access_token;
 
+  // Redirect to app with token as query param
+  const redirectUrl = token
+    ? `${appUrl}?token=${encodeURIComponent(token)}`
+    : appUrl;
       // Redirect immediately
-      window.location.replace(appUrl);
+      window.location.replace(redirectUrl);
     })();
   </script>
 </head>
