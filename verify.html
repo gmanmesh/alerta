@@ -1,38 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8" />
-<title>Verify Email</title>
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const hash = window.location.hash; // e.g., #access_token=...
-    const params = new URLSearchParams(hash.substring(1)); // remove '#'
-
-    const accessToken = params.get('access_token');
-
-    if (accessToken) {
-      const encodedToken = encodeURIComponent(accessToken);
-      const deepLinkUrl = `myapp://verify?token=${encodedToken}`;
-
-      // Check if we're in an environment that supports deep links
-      // For example, in a browser, this won't work, so fallback:
-      
-      // Attempt to redirect to deep link
-      window.location.href = deepLinkUrl;
-
-      // Fallback: display token for manual copying
-      document.body.innerHTML = `
-        <h2>Verification Token</h2>
-        <p>Please copy this token and open your app manually:</p>
-        <pre>${accessToken}</pre>
-      `;
-    } else {
-      document.body.innerHTML = '<h2>Invalid verification link</h2>';
-    }
-  });
-</script>
+  <title>Email Verification</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/supabase.min.js"></script>
 </head>
 <body>
-<h2>Verifying...</h2>
+  <h1>Verifying your email...</h1>
+  <script>
+    // Initialize Supabase client
+    const supabaseUrl = 'https://lxsqhmqmzuaryxgwuius.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx4c3FobXFtenVhcnl4Z3d1aXVzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1NTQwODgsImV4cCI6MjA2NTEzMDA4OH0.iuvTDWf7vlkPUddyix-qN9w8QnB-wkVjfBZ0ATTBdW8'; 
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+    // Parse URL parameters
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    const type = params.get('type');
+
+    // Function to verify email
+    async function verifyEmail() {
+      if (token && type === 'signup') {
+        const { user, error } = await supabase.auth.getUser();
+        if (user) {
+          window.location.href = 'myapp://verification-success?status=verified';
+        } else {
+          // Not verified or error
+          window.location.href = 'myapp://verification-failed?status=failed';
+        }
+      } else {
+        // No token or wrong type
+        window.location.href = 'myapp://verification-failed?status=failed';
+      }
+    }
+    verifyEmail();
+  </script>
 </body>
 </html>
