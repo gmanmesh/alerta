@@ -22,10 +22,10 @@
       if (token && type === 'signup') {
         const { user, error } = await supabase.auth.getUser();
         if (user) {
-          window.location.href = 'myapp://verification-success?status=verified';
+          window.location.href = '192.168.100.29:8081://verification-success?status=verified';
         } else {
           // Not verified or error
-          window.location.href = 'myapp://verification-failed?status=failed';
+          window.location.href = '192.168.100.29:8081://verification-failed?status=failed';
         }
       } else {
         // No token or wrong type
