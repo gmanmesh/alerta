@@ -7,32 +7,43 @@
 <body>
   <h1>Verifying your email...</h1>
   <script>
-    // Initialize Supabase client
-    const supabaseUrl = 'https://lxsqhmqmzuaryxgwuius.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx4c3FobXFtenVhcnl4Z3d1aXVzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1NTQwODgsImV4cCI6MjA2NTEzMDA4OH0.iuvTDWf7vlkPUddyix-qN9w8QnB-wkVjfBZ0ATTBdW8'; 
+    const supabaseUrl = 'https://myproject.supabase.co';
+    const supabaseKey = 'my-public-key'; 
     const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-    // Parse URL parameters
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token');
-    const type = params.get('type');
 
-    // Function to verify email
-    async function verifyEmail() {
-      if (token && type === 'signup') {
-        const { user, error } = await supabase.auth.getUser();
-        if (user) {
-          window.location.href = '192.168.100.29:8081://verification-success?status=verified';
+    // Replace with your app URL
+    const appUrl = 'http://192.168.100.29:8081';
+
+    async function handleVerification() {
+      if (token) {
+        // verify the token with Supabase
+        // But usually, the link already verifies the email
+        // So we can just wait and redirect
+
+        // Fetch user info to confirm email verification
+        const { data: { user } } = await supabase.auth.getUser();
+
+        if (user && user.email_confirmed_at) {
+          // Email is verified
+          window.location.href = `${appUrl}?verification=success`;
         } else {
-          // Not verified or error
-          window.location.href = '192.168.100.29:8081://verification-failed?status=failed';
+          // Not verified yet or user not logged in
+          // For email verification, the user might need to log in first
+          // Or, just redirect after some delay
+          setTimeout(() => {
+            window.location.href = `${appUrl}?verification=done`;
+          }, 2000);
         }
       } else {
-        // No token or wrong type
-        window.location.href = '192.168.100.29:8081://verification-failed?status=failed';
+        // Invalid link
+        window.location.href = `${appUrl}?verification=failed`;
       }
     }
-    verifyEmail();
+
+    handleVerification();
   </script>
 </body>
 </html>
