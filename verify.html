@@ -3,35 +3,23 @@
 <head>
   <title>Email Verification</title>
   <script>
-    // app's URL
-    const appUrl = 'myapp://Verification';
+  // Get the hash fragment (without the '#')
+  const hash = window.location.hash.substring(1); // "access_token=eyJhbG..."
 
-    // Function to parse URL hash parameters
-    function parseHashParams() {
-      const hash = window.location.hash.substring(1); // Remove the #
-      const params = {};
-      hash.split('&').forEach(pair => {
-        const [key, value] = pair.split('=');
-        if (key) {
-          params[key] = decodeURIComponent(value);
-        }
-      });
-      return params;
-    }
-    // Immediately execute
-    (function() {
-      const params = parseHashParams();
+  // Parse the hash into key-value pairs
+  const params = new URLSearchParams(hash);
+  const accessToken = params.get('access_token');
 
-      const token = params.access_token;
+  if (accessToken) {
+    // Optionally, verify token with your backend
 
-  // Redirect to app with token as query param
-  const redirectUrl = token
-    ? `${appUrl}?token=${encodeURIComponent(token)}`
-    : appUrl;
-      // Redirect immediately
-      window.location.href=redirectUrl;
-    })();
-  </script>
+    // Redirect to app with deep link, passing token
+    const appLink = `myapp://Verification?access_token=${encodeURIComponent(accessToken)}`;
+    window.location.href = appLink;
+  } else {
+    document.body.innerText = 'Invalid or missing token.';
+  }
+</script>
 </head>
 <body>
   <h1>Verifying your email...</h1>
