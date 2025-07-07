@@ -4,7 +4,7 @@
   <title>Email Verification</title>
   <script>
     // app's URL
-    const appUrl = 'myapp://192.168.100.29:8081';
+    const appUrl = 'myapp://Verification';
 
     // Function to parse URL hash parameters
     function parseHashParams() {
@@ -29,7 +29,7 @@
     ? `${appUrl}?token=${encodeURIComponent(token)}`
     : appUrl;
       // Redirect immediately
-      window.location.replace(redirectUrl);
+      window.location.href=redirectUrl;
     })();
   </script>
 </head>
