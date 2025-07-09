@@ -2,44 +2,59 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Email Verification</title>
+  <title>Verify Email</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/supabase.min.js"></script>
 </head>
 <body>
-  <h1>Verifying your email...</h1>
+  <h2>Verifying your email...</h2>
   <script>
-    // Function to parse hash fragment parameters
-    function getHashParams() {
-      const hash = window.location.hash.substring(1); // Remove the '#'
-      const params = new URLSearchParams(hash);
-      const entries = {};
-      for (const [key, value] of params.entries()) {
-        entries[key] = value;
+    // Initialize Supabase client
+    const supabaseUrl = 'https://lxsqhmqmzuaryxgwuius.supabase.co';
+    const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx4c3FobXFtenVhcnl4Z3d1aXVzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1NTQwODgsImV4cCI6MjA2NTEzMDA4OH0.iuvTDWf7vlkPUddyix-qN9w8QnB-wkVjfBZ0ATTBdW8';
+    const supabase = supabase.createClient(supabaseUrl, supabaseAnonKey);
+
+    // Function to extract access_token from URL fragment
+    function getAccessTokenFromUrl() {
+      const hash = window.location.hash; // e.g., #access_token=...
+      if (!hash) return null;
+
+      const params = new URLSearchParams(hash.substring(1)); // remove '#' and parse
+      return params.get('access_token');
+    }
+
+    async function verifyUserAndRedirect() {
+      const accessToken = getAccessTokenFromUrl();
+
+      if (accessToken) {
+        try {
+          // Set the access token to Supabase
+          supabase.auth.setAuth(accessToken);
+
+          // fetch current user to verify token
+          const { data: user, error } = await supabase.auth.getUser();
+
+          if (error || !user) {
+            alert('Invalid or expired token.');
+            return;
+          }
+
+          // Check if email is verified
+          if (user.email_confirmed_at) {
+            // Email verified, redirect to app with deep link
+            window.location.href = 'myapp://verify?status=verified';
+          } else {
+            alert('Email not verified yet. Please verify your email.');
+          }
+        } catch (err) {
+          console.error('Error verifying user:', err);
+        }
+      } else {
+        alert('Access token not found.');
       }
-      return entries;
     }
 
-    // Extract the access token from hash
-    const params = getHashParams();
-    const accessToken = params['access_token'];
-
-    if (accessToken) {
-      // Optional: Verify token with your backend here via fetch
-      // fetch('/api/verify-token', { method: 'POST', body: JSON.stringify({ token: accessToken }) })
-
-      // Redirect back to app with deep link
-      const appLink = `myapp://?access_token=${encodeURIComponent(accessToken)}`;
-
-      // Optionally, you can give users a moment to see a message before redirecting
-      document.body.innerHTML = '<p>Verification successful! Redirecting to app...</p>';
-
-      // Redirect after a short delay (e.g., 1 second)
-      setTimeout(() => {
-        window.location.href = appLink;
-      }, 1000);
-    } else {
-      // No token found, show an error or message
-      document.body.innerHTML = '<p>Invalid verification link or token missing.</p>';
-    }
+    // Run verification on page load
+    verifyUserAndRedirect();
   </script>
 </body>
 </html>
