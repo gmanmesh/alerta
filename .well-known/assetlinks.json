@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.edadev.alerta",
+      "sha256_cert_fingerprints": [
+        "aaf355b7b130dc09d7baad5addee3f0525a29488"
+      ]
+    }
+  }
+]
